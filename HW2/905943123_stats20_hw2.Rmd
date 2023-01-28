@@ -1,0 +1,274 @@
+---
+title: "Stats 20, 23W -- Homework 2"
+author: "Haojie Liu  -- 905943123"
+date: "`r format(Sys.Date(), '%D')`"
+output:
+  html_document:
+    toc: yes            # creates table of contents
+    toc_depth: 4        # toc will include headers <= ####
+    toc_float: yes      # toc always on left of page
+    code_folding: show  # allows hiding of code
+---
+
+## Question 1
+
+```{r Question 1 Background}
+mixed1 <- c(TRUE, FALSE, FALSE, TRUE, 4, 0, 3)
+mixed1
+mixed2 <- c(TRUE, FALSE, FALSE, TRUE, 4, 0, "3")
+mixed2
+mixed3 <- c(c(TRUE, FALSE, FALSE, TRUE, 4, 0), "3")
+mixed3
+```
+
+### (a)
+<!-- ENTER YOUR ANSWER BELOW -->
+As we know, R will consider character in first place. so everything in mixed2 and mixed3 will be print out as a character. In mixed2, when the array is consider as a character array, all of the element will be printed in character form. However, in mixed3, all of the element before three are placed inside a array, then R will read it as numeric first and then print it as a character.
+
+### (b)
+<!-- ENTER YOUR ANSWER BELOW, IT CAN BE JUST THE COMMAND. NO NEED TO STORE AN OBJECT -->
+```{r Question 1b}
+mixed4 <- c(TRUE, FALSE, c(FALSE, TRUE, 4), 0, "3")
+mixed4
+```
+
+## Question 2
+
+```{r}
+as.logical(mixed2);
+as.logical(mixed3);
+```
+
+
+### (a)
+<!-- ENTER YOUR ANSWER BELOW -->
+The reason why when print mixed2 as a numeric element will produce NA product is because that R can't read a character that does not contain numbers as a numeric element. For example, "OK" or "TRUE"
+### (b)
+<!-- ENTER YOUR ANSWER BELOW -->
+The reason why when print mixed2 as a logical element will produce NA product is because that R can't read a character that does not contain logical statement as a logical element. For example, "GOoR" or "21"
+### (c)
+<!-- ENTER YOUR ANSWER BELOW, IT CAN BE JUST THE COMMAND. NO NEED TO STORE AN OBJECT -->
+```{r Question 2c}
+as.logical(as.numeric(mixed3))
+```
+
+## Question 3
+
+### (a)
+<!-- ENTER YOUR ANSWERS BELOW, THEY CAN BE JUST THE COMMANDs. NO NEED TO STORE OBJECTs -->
+```{r Question 3a}
+seq(1,25)
+1:25
+seq_len(25)
+seq_along(1:25)
+```
+
+### (b)
+<!-- ENTER YOUR ANSWERS BELOW, THEY CAN BE JUST THE COMMANDs. NO NEED TO STORE OBJECTs -->
+```{r Question 3b}
+seq(8.0, 2.0, length=13 )
+rep(c(-1,0,3,5),5)
+rep(c(5,4,3,2,1),5)
+rep(c(5,4,3,2,1),c(5,5,5,5,5))
+rep(c(10,9,8,7,6),c(1,2,3,4,5))
+
+```
+
+### (c)
+<!-- ENTER YOUR ANSWER BELOW -->
+The largest decrease by on every time the pattern generate, seq() and rep() do not have the ability to decrease the first number every time it repeat. To generate this pattern, we can create another pattern that contains all five repetitive number and use minus operation to generate the pattern by taking difference between two patterns.
+<!-- USE THE CODE CHUNK BELOW IF YOU'D LIKE -->
+```{r Question 3c}
+
+rep(seq(10,6),5)-rep(c(0,1,2,3,4),c(5,5,5,5,5))
+
+```
+
+
+## Question 4
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 4a}
+k <- c(0:100)
+
+sin(k*pi)
+```
+<!-- ENTER YOUR EXPLANATION BELOW -->
+The output does not match what I expect mathematically, because in radian mode, $sin(\pi)$ should equal to 0 however R gives me a output of 1.224647e-16.
+## Question 5
+```{r}
+c <- seq(1:5)
+sum((c-1)^3)
+
+```
+
+### (a)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 5a}
+
+my_skew <- function(x){
+  
+  df_mean <- mean(x);
+  size <- length(x);
+  skew <- ( sqrt(size)*sum((x-df_mean)^3) )/( (sum((x-df_mean)^2))^1.5)
+  skew
+}
+
+
+```
+
+### (b)
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 5b}
+running_times <- c(51, 40, 57, 34, 47, 50, 50, 56, 41, 38)
+my_skew(running_times)
+# left-skewed when my_skew returns a negative value
+```
+
+### (c)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 5c}
+my_skew_one <-function(x){
+  
+  n <- length(x)
+  mean <- sum(x) / n
+  m1 <- sqrt(n)*(sum((x^3))-(3*mean)*sum(x^2)+(2*n*(mean^3)))
+  m2 <- (sum((x^2))-(n*(mean^2)))^1.5
+
+  skew<-m1/m2
+  skew
+  
+}
+
+
+```
+
+### (d)
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 5d}
+my_skew(running_times*(10^10))
+my_skew_one(running_times*(10^10))
+```
+<!-- ENTER YOUR EXPLANATION BELOW -->
+There's no difference, because these two equations are mathmatically equal. 
+
+### (e)
+<!-- USE THE CODE CHUNK BELOW IF YOU'D LIKE -->
+```{r Question 5e}
+my_skew(running_times) - my_skew_one(running_times)
+```
+
+<!-- ENTER YOUR ANSWER BELOW -->
+Due to the difference between one pass and two pass formulas, there is a slightly different between two results which is cause by the error of the data. 
+
+## Question 6
+
+### (a)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 6a}
+my_length <- function(x){
+  a<-c(x,1)
+  max(seq_along(a))-1
+}
+
+```
+
+### (b)
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 6b}
+my_length(numeric(0))
+my_length(seq(1, 99, by = 2))
+my_length(c("waffles", "friends", "work"))
+```
+
+## Question 7
+
+### (a)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 7a}
+
+my_rev <- function(x){
+  
+  a<-x[(length(x)):min(length(x),1)]
+  a
+}
+
+```
+
+### (b)
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 7b}
+
+my_rev(numeric(0))
+my_rev(seq(1, 99, by = 2))
+my_rev(c("waffles", "friends", "work"))
+```
+
+## Question 8
+
+### (a)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 8a}
+front <- function(n,x){
+  x[min(n,1,length(x)):min(n, length(x))]
+}
+
+front(6,numeric(0))
+front(6,c("waffles", "friends", "work"))
+front(0,seq(1, 99, by = 2))
+```
+
+### (b)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 8b}
+back <- function(n,x){
+  x<-my_rev(x)
+  x<-x[min(n,1,length(x)):min(n, length(x))]
+  my_rev(x)
+}
+
+back(6,numeric(0))
+back(6,c("waffles", "friends", "work"))
+back(6,seq(1, 99, by = 2))
+```
+
+
+### (c)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 8c}
+insert_at <- function(x,y,at){
+  beginning<-front(at-1,x)
+  beginning[length(beginning)+1:length(y)]<-y
+  
+  
+  ending<-back((length(x)-at+1), x)
+  newlength <- length(x)+length(y)
+  new_vec<- c(1:newlength)
+  new_vec[1:newlength] <- c(beginning,ending)
+  new_vec
+}
+```
+
+### (d)
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 8d}
+
+insert_at(1:5, c(0, 0, 0), at = 1)
+insert_at(1:5, c(0, 0, 0), at = 3)
+insert_at(1:5, c(0, 0, 0), at = 5)
+insert_at(1:5, c(0, 0, 0), at = 6)
+```
+
+
+
+
+
+
+
+

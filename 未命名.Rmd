@@ -1,0 +1,41 @@
+---
+title: "Discussion"
+author: "Vincent"
+date: "2023-01-28"
+output: html_document
+---
+
+## Problem 1
+```{r error = TRUE}
+x[3]+y[4]
+
+sum(x[1:4])
+
+(x[5]*x[10])/(x[8]-x[5])
+
+x[c(6,4,7,3)]
+
+y[c(5,1,1,1,4,4,7)]
+
+c(x,y)
+```
+
+## Problem 2
+
+```{r}
+
+x <- function(a){
+  
+  b<- isNA(a)
+  b
+}
+
+y <- function(a,c){
+  
+  
+  
+}
+
+```
+
+
