@@ -1,0 +1,458 @@
+---
+title: "Stats 20, 23W -- Homework 4"
+author: "Haojie Liu 905943123"
+date: "`r format(Sys.Date(), '%D')`"
+output:
+  html_document:
+    toc: yes            # creates table of contents
+    toc_depth: 4        # toc will include headers <= ####
+    toc_float: yes      # toc always on left of page
+    code_folding: show  # allows hiding of code
+---
+
+## Question 1
+
+```{r}
+my_t <- function(A){
+  
+  B<- matrix(ncol=nrow(A),nrow=ncol(A))
+  
+  for (i in seq_len(ncol(A))){
+  
+  B[i,]<- A[,i]
+  
+  }
+  
+  B
+}
+
+
+```
+
+
+## Question 2
+
+### (a)
+<!-- ENTER YOUR ANSWER BELOW -->
+```{r}
+
+
+my_cor <- function(x,y, use = "everything"){
+  
+  if(use == "everything"){
+    complete_cases <- complete.cases(x, y)
+    x <- x[complete_cases]
+    y <- y[complete_cases]
+    
+  }else if(use == "pairwise.complete.obs"){
+    
+    complete_cases <- !is.na(A[1,]) & !is.na(A[2,])
+    x <- x[1,complete_cases]
+    y <- y[2,complete_cases]
+    
+  }else{
+    stop("Invalid input")
+  }
+  
+  n <- length(x)
+  if (n <= 1) {
+    return(NA)
+  }
+  
+  
+  x_mean <- mean(x)
+  y_mean <- mean(y)
+  m_1 <- sum((x-x_mean)*(y-y_mean))
+  m_2a <-  (sum((x-x_mean)^2))
+  m_2b <-  (sum((y-y_mean)^2))
+  
+  r = m_1/sqrt(m_2a*m_2b)
+  
+  if (m_2a == 0 || m_2b == 0) {
+    return(NA)    
+  }
+  
+  r
+  
+  
+}
+
+```
+
+### (b)
+<!-- ENTER YOUR ANSWER BELOW -->
+```{r}
+
+df<- c(1,2,3,45,1,23,12,42,12,42,2)
+ef <- c(1,23,42,31,42,13,23,12,42,23,23)
+linreg <- function(x,y,use="everything"){
+  
+  if(use == "everything"){
+    complete_cases <- complete.cases(x, y)
+    x <- x[complete_cases]
+    y <- y[complete_cases]
+    
+  }else if(use == "pairwise.complete.obs"){
+    
+    complete_cases <- !is.na(A[1,]) & !is.na(A[2,])
+    x <- x[1,complete_cases]
+    y <- y[2,complete_cases]
+    
+  }else{
+    stop("Invalid input")
+  }
+  
+  
+  b <- my_cor(x,y)*(sd(x)/sd(y))
+  a <- mean(y)-(b*mean(x))
+  
+  c(a,b)
+}
+
+linreg(df,ef)
+
+
+```
+
+### (c)
+<!-- ENTER YOUR ANSWER BELOW, IT CAN BE JUST THE COMMAND. NO NEED TO STORE AN OBJECT -->
+```{r Question 2c}
+height <- c(61,62,63,64,66,68)
+weight <- c(104,110, 125,141,160,170)
+
+linreg(height,weight)
+```
+The regression line is $y=128.8544+0.096x$
+
+### (d)
+
+```{r}
+
+A <- cbind(c(1,2),c(1,3),c(1,4))
+B <- cbind(c(1,2,3),c(2,3,4))
+
+A%*%B
+
+
+
+linreg_mat<-function(x,y){
+  
+  if(length(x)!=length(y)){
+    stop("The vector is not the same length")
+  }
+  
+  X<-matrix(1,ncol=2,nrow = length(x))
+  X[,2]<-x
+  X
+  solve( t(X) %*% X)%*%t(X)*y
+  
+}
+
+linreg_mat(df,ef)
+```
+
+### (e)
+
+```{r}
+linreg(height,weight)
+```
+The result is same from part c
+
+### (f)
+
+The slope coefficient is 0.09602464
+
+## Question 3
+
+### (a)
+<!-- ENTER YOUR ANSWERS BELOW, THEY CAN BE JUST THE COMMANDs. NO NEED TO STORE OBJECTs -->
+```{r Question 3a}
+
+
+`%m%` <- function(A,B){
+ if(ncol(A)!=nrow(B)){
+   stop("non-conformable arguments")
+ }
+
+  C <- matrix(ncol = ncol(B),nrow = nrow(A))
+  for (i in seq_len(nrow(C))){
+    
+    for (j in seq_len(ncol(C))){
+      
+      C[i,j]=sum(A[i,]*B[,j])
+    }
+    
+  }
+  C
+}
+
+```
+
+### (b)
+<!-- ENTER YOUR ANSWERS BELOW, THEY CAN BE JUST THE COMMANDs. NO NEED TO STORE OBJECTs -->
+```{r Question 3b}
+
+X <- cbind(c(6,5,4),c(3,2,1))
+Y <- cbind(c(1,4,7),c(2,5,8),c(3,6,9))
+
+Y%m%X
+Y%*%X
+
+```
+
+## Question 4
+
+### (a)
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 4a}
+'%^%' <- function(A, c){
+  
+  if(c<0){
+    stop("non-conformable arguments")
+  }else if(c==0){
+    C <- matrix(1, ncol = ncol(A),nrow=nrow(A))
+    C
+  }else{
+    C <- A
+    while(c>1){
+      C <- C%m%A
+      c <- c-1
+    }
+    C
+  }
+
+}
+
+```
+
+### (b)
+```{r}
+Z <- cbind(c(0.2,0.7,0.1),c(0.6,0.2,0.2),c(0.4,0.1,0.5))
+Z%^%0
+Z%^%5
+Z%^%50
+Z%^%500
+```
+
+<!-- ENTER YOUR EXPLANATION BELOW -->
+
+## Question 5
+
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+```{r Question 5a}
+
+my_which <- function(A, arr.ind = FALSE){
+  
+  if(!is.logical(A)){
+    stop("argument to which is not logical")
+  }
+  
+  if(arr.ind == FALSE){
+    a <- logical(0)
+    position <- numeric(0)
+    for(i in seq_len(ncol(A))){
+      a <- c(a,A[,i]) 
+    }
+    for(i in seq_len(length(a))){
+      if(isTRUE(a[i])){
+        position <- c(position, i)
+      }
+    }
+    position
+  }else{
+    row <- numeric(0)
+    col <- numeric(0)
+    for(i in seq_len(nrow(A))){
+      
+      for(j in seq_len(ncol(A))){
+        
+        if(isTRUE(A[i,j])){
+          row <- c(row,i)
+          col <- c(col,j)
+        }
+        
+      }
+      
+    }
+    cbind(row,col)
+  }
+  
+}
+
+```
+
+
+## Question 6
+
+### (a)
+```{r Question 6a}
+# load the data
+load("mlb.RData")
+```
+
+#### i)
+```{r}
+tapply(hit,team,max)
+```
+
+#### ii)
+```{r}
+table(team)
+```
+
+#### iii)
+```{r}
+tapply(hr>=1,team,sum)
+```
+
+### (b)
+<!-- USE THE CODE CHUNK BELOW -->
+#### i)
+```{r Question 6b}
+tapply(hit[ab >= 100] / ab[ab >= 100], team[ab >= 100], max)
+```
+#### ii)
+
+```{r}
+tapply(hit, team, sum) / tapply(ab, team, sum)
+```
+### (c)
+
+```{r}
+tapply(hr, list(league,pos), mean)
+
+```
+Rightfield has the largest difference.
+
+### (d)
+
+```{r}
+apply(table(team,pos),2,median)
+```
+
+
+## Question 7
+
+### (a)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 7a}
+my_row <- function(A){
+  
+  C <- A
+    
+  for (i in seq_len(nrow(A))){
+    
+    for (j in seq_len(ncol(A))){
+      
+      C[i,j] <- i
+      
+    }
+    
+  }
+  C
+}
+```
+
+### (b)
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 7b}
+my_col <- function(A){
+  
+  C <- A
+    
+  for (i in seq_len(nrow(A))){
+    
+    for (j in seq_len(ncol(A))){
+      
+      C[i,j] <- j
+      
+    }
+    
+  }
+  C
+}
+
+```
+
+### (c)
+
+```{r Question 7c}
+
+my_diag <- function(x, nrow, ncol) {
+  if (missing(nrow)) {
+    warning("No value provided for 'nrow'")
+    nrow <- length(x)
+  }
+  if (missing(ncol)) {
+    warning("No value provided for 'ncol'")
+    ncol <- length(x)
+  }
+  if (!is.null(nrow(x))) { 
+    if (nrow(x) == 0 & ncol(x) == 0) {
+      y <- numeric(0)
+    } else {
+      y <- integer(0)
+      if (nrow(x) >= ncol(x)) {
+        for (i in seq_len(ncol(x))) {
+          y <- c(y, x[i, i])
+        }
+      } else {
+        for (i in seq_len(nrow(x))) {
+          y <- c(y, x[i, i])
+        }
+      }
+    }
+  }
+  if (is.null(nrow(x))) {
+    if (length(x) > 1) { 
+      y <- matrix(0, nrow = nrow, ncol = ncol)
+      for (i in seq_along(x)) {
+        y[i, i] <- x[i]
+      }
+    } else { 
+      if (length(x) == 1) { 
+        y <- matrix(0, nrow = x, ncol = x)
+        for (i in seq_len(x)) {
+          y[i, i] <- 1
+        }
+      } else { # x is 0
+        y <- matrix(0, nrow = 0, ncol = 0)
+      }
+    }
+    
+  }
+  
+  y
+}
+
+```
+
+## Question 8
+
+### (a)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 8a}
+
+```
+
+### (b)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 8b}
+
+```
+
+### (c)
+<!-- CREATE THE FUNCTION IN THE CODE CHUNK BELOW -->
+<!-- NAME THE FUNCTION AND ITS INPUTS EXACTLY AS STATED IN THE ASSIGNENT -->
+```{r Question 8c}
+
+```
+
+### (d)
+<!-- USE THE CODE CHUNK BELOW -->
+```{r Question 8d}
+
+```

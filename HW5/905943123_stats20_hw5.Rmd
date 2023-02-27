@@ -1,0 +1,298 @@
+---
+title: "Stats 20, 23W -- Homework 5"
+author: "Haojie Liu 905943123"
+date: "`r format(Sys.Date(), '%D')`"
+output:
+  html_document:
+    toc: yes            # creates table of contents
+    toc_depth: 4        # toc will include headers <= ####
+    toc_float: yes      # toc always on left of page
+    code_folding: show  # allows hiding of code
+---
+
+## Question 1
+
+```{r}
+char <- c("4", "2", "1", "0")
+num <- 0:3
+charnum <- data.frame(char, num, stringsAsFactors = TRUE)
+```
+### (a)
+```{r}
+as.numeric(char)
+as.numeric(charnum$char)
+```
+As we apply that the statement stringAsFactors, then array char will be labled as the factor of the list. Therefore, when we call as.numeric(charnum$char), it will express the levels not the value itself.
+
+### (b)
+```{r}
+
+char <- c("4", "2", "1", "0")
+char <- as.numeric(char)
+num <- 0:3
+charnum <- data.frame(char, num, stringsAsFactors = TRUE)
+as.numeric(char)
+as.numeric(charnum$char)
+```
+
+
+## Question 2
+```{r}
+simple_list <- list("vector" = 1:10, "matrix" = matrix(6:1, nrow = 3, ncol = 2))
+```
+### (a)
+<!-- ENTER YOUR ANSWER BELOW -->
+The dollar operator cannot be used to create new names in a list: When we use $ operator to access a named component of a list, it allows us to access an existing named component or modify its value. However, it cannot be used to create a new named component with a name that does not already exist in the list. Thus, simple_list NULL would give an error message because NULL is not a valid name for a list component.
+
+NULL is reserved in R for representing missing or undefined values: In R, NULL is a reserved object that represents missing or undefined values. It is not a normal object that can be assigned as a value to a named component of a list. Instead, NULL is used to indicate that a particular value does not exist or is undefined. Therefore, attempting to add a named component to a list that has a value of NULL is not a meaningful operation.
+
+### (b)
+```{r}
+
+simple_list <- list("vector" = 1:10, "matrix" = matrix(6:1, nrow = 3, ncol = 2), "NULL" = c(NULL))
+simple_list
+length(simple_list) == 3
+
+simple_list
+```
+### (c)
+
+```{r}
+simple_list <- list("vector" = c(NULL), "matrix" = matrix(6:1, nrow = 3, ncol = 2), "NULL" = c(NULL))
+simple_list
+```
+
+
+## Question 3
+
+```{r}
+
+my_scale <- function(x) {
+  x_min <- min(x, na.rm = TRUE)
+  x_max <- max(x, na.rm = TRUE)
+  if (is.null(attr(x, "a")) || is.null(attr(x, "b"))) {
+    scaled_x <- (x - x_min) / (x_max - x_min)
+    attr(scaled_x, "a") <- 0
+    attr(scaled_x, "b") <- 1
+  } else {
+    a <- attr(x, "a")
+    b <- attr(x, "b")
+    scaled_x <- a + (x - x_min) * (b - a) / (x_max - x_min)
+    attr(scaled_x, "a") <- a
+    attr(scaled_x, "b") <- b
+  }
+  scaled_x
+}
+```
+
+
+## Question 4
+
+### (a)
+
+Write a function in R that takes a numeric vector as input and returns the average of the even numbers in the vector.
+
+Function signature: average_even(x)
+
+Input:
+
+x: a numeric vector.
+Output:
+
+A numeric value representing the average of the even numbers in x.
+
+Example:
+
+average_even(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+# Expected output: 6
+
+average_even(c(1, 3, 5, 7, 9))
+# Expected output: NaN
+
+
+Ideal Solution:
+```{r}
+average_even <- function(x) {
+  even_numbers <- x[x %% 2 == 0]  # select even numbers
+  if (length(even_numbers) == 0) {
+    NaN
+  }
+  mean(even_numbers)
+}
+
+```
+
+Explanation:
+The function uses the modulus operator (%%) to select the even numbers in the input vector. It then checks if there are any even numbers in the vector. If there are no even numbers, the function returns NaN. Otherwise, the function calculates the mean of the even numbers using the mean() function and returns the result.
+
+### (b)
+
+Erroneous code:
+```{r error=TRUE}
+product <- function(x) {
+  for (i in x) {
+    product <- product * i
+  }
+  product
+}
+
+```
+
+Fixed Code:
+```{r}
+product_fixed <- function(x) {
+  product <- 1
+  for (i in x) {
+    product <- product * i
+  }
+  product
+}
+
+```
+
+
+Errors:
+
+1. Uninitialized variable: The variable product is not initialized, so the first time through the loop, product is undefined and cannot be used to calculate the product of the elements. To fix this, product needs to be initialized to 1.
+2. Overwriting variable: The variable product is also used as the loop variable, which means that each time through the loop, product is being overwritten with a new value, causing the product to be calculated incorrectly. To fix this, we need to use a different variable to store the product of the elements.
+3. Function name: The function name product is the same as the variable used to store the product of the elements, which can cause issues with scoping. To fix this, we can use a different name for the function.
+
+
+Explanation:
+The initial code contains multiple errors. The first error is that the variable product is not initialized before being used to calculate the product of the elements in the loop. The second error is that the loop variable i is overwriting the product variable in each iteration, causing the product to be calculated incorrectly. Finally, the function name product is the same as the variable used to store the product of the elements, which can cause issues with scoping. The fixed code initializes the product variable to 1, uses a different variable to store the product of the elements in the loop, and renames the function to product_fixed.
+
+
+
+## Question 5
+
+
+### (a)
+
+```{r}
+
+my_unlist<- function(x){
+
+  if (all(lapply(x, class) == "factor")) {
+    unlist <- factor(character(0))
+  }else {
+    unlist <- numeric(0)
+  }
+  for (i in seq_len(length(x))) {
+    unlist <- c(unlist, x[[i]])
+  }
+  unlist
+  
+}
+
+my_unlist(list(c(2, 1, 1), c(3, 2, 1), 2))
+my_unlist(list(factor(c("a", "a", "b", "c")), factor(c("b", "c", "e")), factor(c("a", "d", "b"))))
+my_unlist(list(factor(c("a", "b")), c(1, 2)))
+my_unlist(list(factor(c("a", "b")), factor(c("b", "c")), c("a", "b")))
+
+```
+### (b)
+
+```{r}
+
+stat_mode <-function(x,first = FALSE){
+  
+  x<-unlist(x)
+  y<-unique(x)
+
+  index <- c()
+  for (i in seq_len(length(y))){
+  
+   index[i] <- length(which(x==y[i]))
+  }
+  index
+  a <- which(index==max(index))
+  
+  if(first==TRUE){
+    unique(x[which(x==y[a[1]])])
+  }else{
+    
+    z<-x[0]
+    for (i in seq_len(length(a))){
+      
+      z <- c(z,unique(x[which(x==y[a[i]])]))
+    }
+    z
+  }
+  
+}
+
+stat_mode(c(FALSE, FALSE, TRUE, TRUE, FALSE))
+stat_mode(list(c(2, 1, 1), c(3, 2, 1), 2))
+stat_mode(list(c(2, 1, 1), c(3, 2, 1), 2), first = TRUE)
+stat_mode(list(factor(c("control", "treatment1", "control")),
+               factor(c("control", "treatment2"))
+) )
+```
+
+### (c)
+```{r}
+
+df_summary <- function(x){
+
+  col_data <- list()
+  col_data <- c(col_data, x[order(colnames(x))])
+  
+  for(i in seq_len(ncol(x))){
+    
+    if(is.numeric(x[,i])){
+      
+      col_data[[i]]<-list(
+        "class" = class(x[[i]]),
+        "min" = min(x[[i]],na.rm = TRUE),
+        "mean" = mean(x[[i]],na.rm=TRUE),
+        "max" = max(x[[i]],na.rm = TRUE),
+        "na_count" = sum(is.na(x[[i]]))
+      )
+      
+    }else{
+      col_data[[i]]<-list(
+        "class" = class(x[[i]]),
+        "mode" = stat_mode(x[[i]]),
+        "mode_count" = sum(col_data[[i]] == stat_mode(col_data[[i]])[1], na.rm = TRUE)
+      )
+    }
+    
+  }
+  
+  
+  
+  
+  output <- list(
+    "n_obs"=nrow(x),
+    "n_var"=ncol(x),
+    "var_names"=attr(x,"names"),
+    "column_data" = col_data
+    )
+  
+  output
+  
+}
+
+
+x<- data.frame("Homework_One"=c(88,84,93,NA),"Homework_Two"=c(95,90,99,60),"Homework_Three"=c(NA,NA,88,23),"Lecture"=c("Lecture 1","Lecture 1","Lecture 1","Lecture 2"))
+
+  
+df_summary(x)
+
+```
+### (d)
+
+```{r}
+
+load("starwars.RData")
+df_summary(starwars)
+```
+
+### (e)
+"Snowspeeder" "Imperial Speeder Bike" and "Tribubble bongo"
+
+
+
+
+
+
